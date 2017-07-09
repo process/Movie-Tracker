@@ -4,11 +4,12 @@ import os.path
 import sqlite3
 
 database = sqlite3.connect("database.db")
+MOVIE_PATH = "/mnt/z/Videos/Movies"
 
 # Useful queries:
 # Get backlog: _db('select name from movie join user_list_mapping on movie.id=user_list_mapping.movie_id where user_list_mapping.user_list_id=4')
 
-# TODO: Make movie directory use symlinks
+# TODO: Make movie directory use symlinks (Symlinks solves renaming problem)
 # TODO: Use media reading lib to get proper container/codec info
 # TODO: Match up movie data with PtP
 
@@ -44,7 +45,7 @@ def _db(cmd, *args):
 def add_movie(name, year=None, description=None):
     _db('INSERT INTO movie (name, year, description) values (?, ?, ?)', name.decode('UTF-8'), year, description)
 
-def check_missing_movie(path):
+def check_missing_movie(path=MOVIE_PATH):
     missing = []
     files = os.listdir(path)
     for f in files:
@@ -54,15 +55,14 @@ def check_missing_movie(path):
                 missing.append(name)
     return missing
 
-def add_releases(path):
+def check_missing_release(path=MOVIE_PATH):
+    missing = []
     files = os.listdir(path)
     for f in files:
         if os.path.isfile(os.path.join(path, f)):
-            if _db('SELECT * FROM release WHERE file_path = ?', f.decode('utf-8')):
-                continue
-            name = f.rsplit('.', 1)[0].decode('utf-8')
-            movie_record = _db('SELECT * FROM movie WHERE name=?', name)[0]
-            _db('INSERT INTO release (movie_id, file_path) values (?, ?)', movie_record[0], f.decode('utf-8'))
+            if not _db('SELECT * FROM release WHERE file_path=?', f.decode('UTF-8')):
+                missing.append(f)
+    return missing
 
 def add_new_movie(path):
     # TODO: Use temp directory
@@ -71,5 +71,4 @@ def add_new_movie(path):
     base_name = os.path.basename(path)
     name = base_name.rsplit('.', 1)[0].decode('utf-8')
     add_movie(name)
-    movie_record = _db('SELECT * FROM movie WHERE name=?', name)
-    _db('INSERT INTO release (movie_id, file_path) values (?, ?)', movie_record[0], base_name.decode('utf-8'))
+    _db('INSERT INTO release (movie_id, file_path) values (?, ?)', database.lastrowid, base_name.decode('utf-8'))
