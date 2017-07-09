@@ -1,0 +1,51 @@
+CREATE TABLE movie (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  year INTEGER,
+  description TEXT
+);
+
+CREATE TABLE person (
+  id INTEGER PRIMARY KEY,
+  name TEXT
+);
+
+CREATE TABLE movie_role (
+  role_type INTEGER,
+  movie_id INTEGER,
+  person_id INTEGER,
+  FOREIGN KEY (movie_id) REFERENCES movie(id),
+  FOREIGN KEY (person_id) REFERENCES person(id)
+);
+
+CREATE TABLE release (
+  id INTEGER PRIMARY KEY,
+  movie_id INTEGER,
+  container INTEGER,
+  codec INTEGER,
+  source INTEGER,
+  size INTEGER,
+  file_source INTEGER,
+  file_path TEXT,
+  FOREIGN KEY (movie_id) REFERENCES movie(id)
+);
+
+CREATE TABLE user (
+  id INTEGER PRIMARY KEY,
+  name TEXT
+);
+
+CREATE TABLE user_list (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER,
+  name TEXT,
+  is_private BOOLEAN,
+  FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE user_list_mapping (
+  user_list_id INTEGER,
+  movie_id INTEGER,
+  FOREIGN KEY (user_list_id) REFERENCES user_list(id),
+  FOREIGN KEY (movie_id) REFERENCES movie(id)
+);
