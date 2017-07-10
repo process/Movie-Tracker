@@ -40,10 +40,11 @@ class FileSource(object):
 def _db(cmd, *args):
     result = database.execute(cmd, args)
     database.commit()
-    return list(result)
+    return list(result), result.lastrowid
 
 def add_movie(name, year=None, description=None):
-    _db('INSERT INTO movie (name, year, description) values (?, ?, ?)', name.decode('UTF-8'), year, description)
+    # Returns ID of newly inserted movie
+    return _db('INSERT INTO movie (name, year, description) values (?, ?, ?)', name.decode('UTF-8'), year, description)[1]
 
 def check_missing_movie(path=MOVIE_PATH):
     missing = []
@@ -51,7 +52,7 @@ def check_missing_movie(path=MOVIE_PATH):
     for f in files:
         if os.path.isfile(os.path.join(path, f)):
             name = f.rsplit('.', 1)[0]
-            if not _db('SELECT * FROM movie WHERE name=?', name.decode('UTF-8')):
+            if not _db('SELECT * FROM movie WHERE name=?', name.decode('UTF-8'))[0]:
                 missing.append(name)
     return missing
 
@@ -60,7 +61,7 @@ def check_missing_release(path=MOVIE_PATH):
     files = os.listdir(path)
     for f in files:
         if os.path.isfile(os.path.join(path, f)):
-            if not _db('SELECT * FROM release WHERE file_path=?', f.decode('UTF-8')):
+            if not _db('SELECT * FROM release WHERE file_path=?', f.decode('UTF-8'))[0]:
                 missing.append(f)
     return missing
 
@@ -70,5 +71,5 @@ def add_new_movie(path):
     # TODO: Create symlinks
     base_name = os.path.basename(path)
     name = base_name.rsplit('.', 1)[0].decode('utf-8')
-    add_movie(name)
-    _db('INSERT INTO release (movie_id, file_path) values (?, ?)', database.lastrowid, base_name.decode('utf-8'))
+    movie_id = add_movie(name)
+    _db('INSERT INTO release (movie_id, file_path) values (?, ?)', movie_id, base_name.decode('utf-8'))
