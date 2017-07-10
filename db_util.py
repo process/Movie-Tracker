@@ -42,9 +42,9 @@ def _db(cmd, *args):
     database.commit()
     return list(result), result.lastrowid
 
-def add_movie(name, year=None, description=None):
+def _add_movie(name, year=None, description=None):
     # Returns ID of newly inserted movie
-    return _db('INSERT INTO movie (name, year, description) values (?, ?, ?)', name.decode('UTF-8'), year, description)[1]
+    return _db('INSERT INTO movie (name, year, description) VALUES (?, ?, ?)', name.decode('UTF-8'), year, description)[1]
 
 def check_missing_movie(path=MOVIE_PATH):
     missing = []
@@ -71,5 +71,23 @@ def add_new_movie(path):
     # TODO: Create symlinks
     base_name = os.path.basename(path)
     name = base_name.rsplit('.', 1)[0].decode('utf-8')
-    movie_id = add_movie(name)
-    _db('INSERT INTO release (movie_id, file_path) values (?, ?)', movie_id, base_name.decode('utf-8'))
+    movie_id = _add_movie(name)
+    _db('INSERT INTO release (movie_id, file_path) VALUES (?, ?)', movie_id, base_name.decode('utf-8'))
+
+def get_movie_by_name(name):
+    return _db('SELECT * FROM movie WHERE name=?', name)[0][0]
+
+def get_user_lists(user_name):
+    user_id = _db('SELECT * FROM user WHERE name=?', user_name)[0][0][0]
+    return _db('SELECT * FROM user_list WHERE user_id=?', user_id)[0]
+
+def get_movies_in_list(user_list):
+    list_items = _db('SELECT * FROM user_list_mapping WHERE user_list_id=?', user_list[0])[0]
+    movies = []
+    for item in list_items:
+        movie_id = item[1]
+        movies.append(_db('SELECT * FROM movie WHERE id=?', movie_id)[0][0])
+    return movies
+
+def add_movie_to_list(user_list, movie):
+    _db('INSERT INTO user_list_mapping (user_list_id, movie_id) VALUES (?, ?)', user_list[0], movie[0])
