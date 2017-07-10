@@ -1,0 +1,12 @@
+# TODO list
+
+# Download PTP download history
+ # Parse out release/source information wherever possible
+# Figure out way to mark director's cut/commentary/criterion/whatever
+# Move files to external storage place
+  # Create symlinks for people to actually browse through
+  # Need to figure out how to make Samba happy with that...
+# Make movie folder and symlink folder only writable by app. Put new files in staging area to process
+# Handle movies with multiple files (documentaries, sets the stage for TV support)
+# Eventually: hook up to butter interface?
+  # Would be great to have Gazelle-style filtering though...
