@@ -3,7 +3,14 @@ import os.path
 
 import sqlite3
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
 database = sqlite3.connect("database.db")
+database.row_factory = dict_factory
 MOVIE_PATH = "/mnt/z/Videos/Movies"
 
 # Useful queries:
@@ -78,16 +85,16 @@ def get_movie_by_name(name):
     return _db('SELECT * FROM movie WHERE name=?', name)[0][0]
 
 def get_user_lists(user_name):
-    user_id = _db('SELECT * FROM user WHERE name=?', user_name)[0][0][0]
+    user_id = _db('SELECT * FROM user WHERE name=?', user_name)[0][0]['id']
     return _db('SELECT * FROM user_list WHERE user_id=?', user_id)[0]
 
 def get_movies_in_list(user_list):
-    list_items = _db('SELECT * FROM user_list_mapping WHERE user_list_id=?', user_list[0])[0]
+    list_items = _db('SELECT * FROM user_list_mapping WHERE user_list_id=?', user_list['id'])[0]
     movies = []
     for item in list_items:
-        movie_id = item[1]
+        movie_id = item['movie_id']
         movies.append(_db('SELECT * FROM movie WHERE id=?', movie_id)[0][0])
     return movies
 
 def add_movie_to_list(user_list, movie):
-    _db('INSERT INTO user_list_mapping (user_list_id, movie_id) VALUES (?, ?)', user_list[0], movie[0])
+    _db('INSERT INTO user_list_mapping (user_list_id, movie_id) VALUES (?, ?)', user_list['user_list_id'], movie['id'])
