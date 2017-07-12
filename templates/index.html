@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block body %}
+  <h4>Lists</h4>
+  {% for item in lists %}
+  <a href="/list/{{ item.id }}">{{ item.name }}</a><br />
+  {% endfor %}
+  <hr>
+  {% for item in movies %}
+  <p><a href="/releases/{{ item.id }}">{{ item.name }}</a></p>
+  {% endfor %}
+{% endblock %}

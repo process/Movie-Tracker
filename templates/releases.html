@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}
+  {% for item in releases %}
+  <p>{{ item.file_path }}</p>
+  {% endfor %}
+{% endblock %}

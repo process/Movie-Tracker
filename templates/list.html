@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}
+  {% for item in movies %}
+  <p><a href="/releases/{{ item.id }}">{{ item.name }}</a></p>
+  {% endfor %}
+{% endblock %}
