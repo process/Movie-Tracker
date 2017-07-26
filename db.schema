@@ -18,15 +18,25 @@ CREATE TABLE movie_role (
   FOREIGN KEY (person_id) REFERENCES person(id)
 );
 
+CREATE TABLE movie_links (
+  movie_id INTEGER,
+  link_type TEXT,
+  link TEXT,
+  FOREIGN KEY (movie_id) REFERENCES movie(id)
+);
+
 CREATE TABLE release (
   id INTEGER PRIMARY KEY,
   movie_id INTEGER,
-  container INTEGER,
-  codec INTEGER,
-  source INTEGER,
+  container TEXT,
+  codec TEXT,
+  source TEXT,
   size INTEGER,
-  file_source INTEGER,
+  file_source TEXT,
   file_path TEXT,
+  ripping_group TEXT,
+  release_info TEXT,
+  tags TEXT,
   FOREIGN KEY (movie_id) REFERENCES movie(id)
 );
 
