@@ -10,3 +10,21 @@
 # Handle movies with multiple files (documentaries, sets the stage for TV support)
 # Eventually: hook up to butter interface?
   # Would be great to have Gazelle-style filtering though...
+
+# Add separate data for actors and crew
+
+# schema migration
+# Create temp directory
+# Create page listing temp files
+# Add file form:
+  required
+  # Get codec, container, size from file path
+  # name
+  optional
+  # media source
+  # file_source
+  # get ripping group from file name?
+  # year
+  # imdb link
+# Move file to movie folder
+~ Done ~
