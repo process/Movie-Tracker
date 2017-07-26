@@ -20,29 +20,6 @@ MOVIE_PATH = "/mnt/z/Videos/Movies"
 # TODO: Use media reading lib to get proper container/codec info
 # TODO: Match up movie data with PtP
 
-class Container(object):
-    MKV = 1
-    AVI = 2
-    MP4 = 3
-    Other = 99
-
-class Codec(object):
-    x264 = 1
-    MPEG4 = 2
-    WMV9 = 3
-    DivX = 4
-    Other = 99
-
-class Source(object):
-    DVD = 1
-    BluRay = 2
-    WEB = 3
-    Other = 99
-
-class FileSource(object):
-    PtP = 1
-    PtP_GP = 2
-    Other = 99
 
 def _db(cmd, *args):
     result = database.execute(cmd, args)
@@ -97,4 +74,4 @@ def get_movies_in_list(user_list):
     return movies
 
 def add_movie_to_list(user_list, movie):
-    _db('INSERT INTO user_list_mapping (user_list_id, movie_id) VALUES (?, ?)', user_list['user_list_id'], movie['id'])
+    _db('INSERT INTO user_list_mapping (user_list_id, movie_id) VALUES (?, ?)', user_list['id'], movie['id'])
