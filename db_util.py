@@ -3,6 +3,8 @@ import os.path
 
 import sqlite3
 
+from dirs import MOVIE_PATH
+
 def dict_factory(cursor, row):
     d = {}
     for idx, col in enumerate(cursor.description):
@@ -11,7 +13,6 @@ def dict_factory(cursor, row):
 
 database = sqlite3.connect("database.db")
 database.row_factory = dict_factory
-MOVIE_PATH = "/mnt/z/Videos/Movies"
 
 # Useful queries:
 # Get backlog: _db('select name from movie join user_list_mapping on movie.id=user_list_mapping.movie_id where user_list_mapping.user_list_id=4')
@@ -49,14 +50,18 @@ def check_missing_release(path=MOVIE_PATH):
                 missing.append(f)
     return missing
 
-def add_new_movie(path):
-    # TODO: Use temp directory
-    # TODO: Scrape from PtP??
-    # TODO: Create symlinks
-    base_name = os.path.basename(path)
-    name = base_name.rsplit('.', 1)[0].decode('utf-8')
-    movie_id = _add_movie(name)
-    _db('INSERT INTO release (movie_id, file_path) VALUES (?, ?)', movie_id, base_name.decode('utf-8'))
+def add_new_movie(path, name, year, **values):
+    movie_id = _add_movie(name, year)
+    fields = ['movie_id', 'file_path']
+    fields.extend(values.keys())
+    q_marks = ', '.join('?' * len(fields))
+    statement = 'INSERT INTO release (%s) VALUES (%s)' % (', '.join(fields), q_marks)
+    print statement, values
+    _db(statement, movie_id, path, *values.values())
+    return movie_id
+
+def add_movie_link(movie_id, link_type, link):
+    _db('INSERT INTO movie_links(movie_id, link_type, link) VALUES (?, ?, ?)', movie_id, link_type, link)
 
 def get_movie_by_name(name):
     return _db('SELECT * FROM movie WHERE name=?', name)[0][0]

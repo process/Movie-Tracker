@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block body %}
+  {% for item in file_list %}
+  <p><a href="/add_movie/{{ item }}">{{ item }}</a></p>
+  {% endfor %}
+{% endblock %}

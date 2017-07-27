@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block body %}
+  <h4>{{ file_name }}</h4>
+  <p>
+    Please fill in the data below. The movie will be added to the dataset
+    and automatically moved.
+  </p>
+  <h5>Add movie data</h5>
+  <form method="post" action="/add_movie_from_temp">
+    <input type="hidden" name="file-name" value="{{ file_name }}">
+    <label>Media Source (eg. Blu-ray, DVD, etc.)</label>
+    <input type="text" name="media-source"><br />
+    <label>File Source (eg. PassThePopcorn, etc.)</label>
+    <input type="text" name="file-source"><br />
+    <label>Ripping group (eg. HiDt, TayTO, HANDJOB, etc.)</label>
+    <input type="text" name="ripping-group" value="{{ ripping_group }}"><br />
+    <label>TMDb link</label>
+    <input type="text" name="tmdb-link"><br />
+    <label>Tags comma separated (eg. "Director's Cut,Extended Edition,Criterion Collection,Golden Popcorn")</label>
+    <input type="text" name="release-tags"><br />
+    <input type="submit">
+  </form>
+{% endblock %}
